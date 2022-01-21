@@ -82,3 +82,62 @@ exercises:
       | Futuristas     | C/Alboraya 10        |
       | Machines       | Calle 3, Lab 3       |
       +----------------+----------------------+
+  - name: "query_07"
+    output: |
+      +-------------------+-----------------------+----------------------+
+      | name              | address               | name                 |
+      +-------------------+-----------------------+----------------------+
+      | Presuntos         | C/Albacete 12, bajo   | Presuntos Implicados |
+      | Implicado         | Torrejón de Ardoz 12  | Presuntos Implicados |
+      | Los Culpables     | C/Maria Cristina 67   | Presuntos Implicados |
+      | Futuristas        | C/Alboraya 10         | Radio Futura         |
+      | Jardín Botánico   | 203,Valencia 46004    | Radio Futura         |
+      +-------------------+-----------------------+----------------------+
+  - name: "query_08"
+    output: |
+      +-------------------+
+      | name              |
+      +-------------------+
+      | J.L. Giménez      |
+      | Soledad Giménez   |
+      | Nacho Maño        |
+      | Carlos Torero     |
+      | Santiago Auserón  |
+      | Luis Auserón      |
+      | Enrique Sierra    |
+      +-------------------+
+  - name: "query_09"
+    output: |
+      +----------------------+
+      | name                 |
+      +----------------------+
+      | Zooropa              |
+      | Achtung baby         |
+      | Good news F.N. world |
+      +----------------------+
+
+  - name: "query_10"
+    output: |
+      +----------------------+
+      | title                |
+      +----------------------+
+      | October              |
+      | Zooropa              |
+      | The unforgettable fi |
+      | Once Upon A Time     |
+      | Living years         |
+      | Word of mouth        |
+      | Invisible touch      |
+      | De sol a sol         |
+      | Ser de agua          |
+      | Alma de blues        |
+      +----------------------+
+
+  - name: "query_11"
+    output: |
+      +--------+------------+
+      | name   | address    |
+      +--------+------------+
+      | Island | 67, JB St. |
+      | WEA    | L Hoyos 42 |
+      +--------+------------+
