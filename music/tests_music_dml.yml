@@ -1,0 +1,84 @@
+judge: sql
+name: music
+package: music/queries
+
+init:
+  - file: create_schema_music.sql
+  - file: insert_data_music.sql
+exercises:
+  - name: "query_01"
+    output: |
+      +----------+
+      | count(*) |
+      +----------+
+      |       18 |
+      +----------+
+  - name: "query_02"
+    output: |
+      +----------------------+
+      | name                 |
+      +----------------------+
+      | U2                   |
+      | Simple Minds         |
+      | Mike + The Mechanics |
+      | Genesis              |
+      +----------------------+
+  - name: "query_03"
+    output: |
+      +---------------+
+      | title         |
+      +---------------+
+      | 7 Deadly Sins |
+      | Lemon         |
+      | So Cruel      |
+      | Zooropa       |
+      +---------------+
+  - name: "query_04"
+    output: |
+      +----------+
+      | role     |
+      +----------+
+      | keyboard |
+      | bass     |
+      | voice    |
+      | guitar   |
+      | drums    |
+      +----------+
+  - name: "query_05"
+    output: |
+      +-------------------+-------+
+      | name              | num   |
+      +-------------------+-------+
+      | FanMike           |    11 |
+      | Implicado         |    25 |
+      | Bonoculture       |   129 |
+      | Waterfront        |   234 |
+      | Presuntos         |   237 |
+      | Ché U2            |   239 |
+      | Los Culpables     |   355 |
+      | Jardín Botánico   |   357 |
+      | Troglominds       |   999 |
+      | The best mind     |  1413 |
+      | u2foryou          |  1700 |
+      | Mentes Fuertes    |  1984 |
+      | Zoomanía          |  2508 |
+      | Machines          |  7789 |
+      | Futuristas        |  9850 |
+      | Fanaticgens       | 12002 |
+      | Genefans          | 23412 |
+      +-------------------+-------+
+  - name: "query_06"
+    output: |
+      +----------------+----------------------+
+      | name           | address              |
+      +----------------+----------------------+
+      | Zoomanía       | 33, Abbey Road       |
+      | u2foryou       | 23, 11th Street      |
+      | Troglominds    | C/Lepe 22            |
+      | Mentes Fuertes | Ramón y Cajal 14     |
+      | The best mind  | 24, Homeround        |
+      | Genefans       | C/Visitación 34      |
+      | Fanaticgens    | Av. H. Dominicos 155 |
+      | Futuristas     | C/Alboraya 10        |
+      | Machines       | Calle 3, Lab 3       |
+      +----------------+----------------------+
