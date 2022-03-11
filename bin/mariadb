@@ -1,12 +1,15 @@
 #!/bin/bash
-VERBOSE=1
-if tty -s ; then
-    VERBOSE=1
-else
-    VERBOSE=0
-fi
+set -f # Disable glob expansion
+# set -x
 
-ARGS=""
+VERBOSE=0
+# if tty -s ; then
+#     VERBOSE=1
+# else
+#     VERBOSE=0
+# fi
+
+ARGS=''
 CONTAINER="mariadb"
 
 while [ $# -ge 1 ] ; do
@@ -16,62 +19,73 @@ while [ $# -ge 1 ] ; do
             CONTAINER=$2
             shift
             ;;
+        -v | --verbose)
+            VERBOSE=1
+            ;;
         *)
-            ARGS="$ARGS $1"
+            if [[ $1 =~ " " ]]; then
+                ARGS="$ARGS '$1'"
+            else
+                ARGS="$ARGS $1"
+            fi
             ;;
     esac
     shift
 done
 
-if [ ! "$(docker ps -q -f name=$CONTAINER)" ]; then
+_print(){
     if [ $VERBOSE -gt 0 ]; then
-        echo Starting $CONTAINER ...
+        echo $@
     fi
+}
+
+if [ "$(docker ps -q -f status=exited -f name=$CONTAINER)" ]; then
+    _print Deleting previous $CONTAINER instance...
+    docker rm $CONTAINER >/dev/null
+fi
+
+if [ ! "$(docker ps -q -f name=$CONTAINER)" ]; then
+    _print Starting $CONTAINER ...
     docker run -d --name $CONTAINER \
         -e MYSQL_ROOT_PASSWORD=1234 \
         --health-cmd='mysql -uroot -p1234' --health-interval=2s \
         mariadb:latest >/dev/null
 
 else
-    if [ $VERBOSE -gt 0 ]; then
-        echo $CONTAINER already running!
-    fi
+    _print $CONTAINER already running!
 fi
 
 # Check health
 # f" --health-cmd=\'mysql -u{self.user} -p{self.password}\' --health-interval=2s"
-if [ $VERBOSE -gt 0 ]; then
-    echo -n "Cheeking $CONTAINER health... "
-fi
+_print -n "Checking $CONTAINER health... "
 HEALTH_COMMAND="docker inspect -f {{.State.Health.Status}} $CONTAINER"
 HEALTH=`$HEALTH_COMMAND`
 until [ $HEALTH = "healthy" ] ; do
     sleep 2
     HEALTH=`$HEALTH_COMMAND`
-    if [ $VERBOSE -gt 0 ]; then
-        echo -n ${HEALTH::1}
-    fi
+    _print -n ${HEALTH::1}
 done
-if [ $VERBOSE -gt 0 ]; then
-    echo " OK"
+_print " OK"
+
+IP_COMMAND="docker inspect --format {{.NetworkSettings.IPAddress}} $CONTAINER"
+IP=`$IP_COMMAND`
+if [ -n "$IP" ] ; then
+    echo "$CONTAINER is ready in the IP address: $IP"
 fi
 
-
-# COMMAND="mysql -h $IP -uroot -p1234"
-# 
-# DOCKER_USER="ps -o user -C dockerd --no-headers"
-# if [ $DOCKER_USER = "root" ]; then
-#     IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER`
-# elif [ $DOCKER_USER = $(whoami) ]; then
-#     # Rootless mode
-#     NSENTER="nsenter -U --preserve-credentials -n -t $(cat $XDG_RUNTIME_DIR/docker.pid)"
-#     IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER`
-# fi
-
+COMMAND="mysql -uroot -p1234 --default-character-set=utf8mb4 $ARGS"
 if tty -s ; then
-    COMMAND="docker exec -it mariadb mysql -uroot -p1234"
-    $COMMAND $ARGS
+    DOCKER_COMMAND="docker exec -it $CONTAINER $COMMAND"
+    eval $DOCKER_COMMAND
+
+    if [ $? -ne 0 ]; then
+        echo
+        echo "Error executing the following command:"
+        echo $DOCKER_COMMAND
+        echo $COMMAND
+    fi
 else
-    COMMAND="docker exec -i mariadb mysql -uroot -p1234"
-    $COMMAND $ARGS <&0
+    DOCKER_COMMAND="docker exec -i $CONTAINER $COMMAND"
+    eval $DOCKER_COMMAND <&0
+    # $DOCKER_COMMAND <&0
 fi
