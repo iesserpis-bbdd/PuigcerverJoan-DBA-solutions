@@ -70,7 +70,7 @@ _print " OK"
 IP_COMMAND="docker inspect --format {{.NetworkSettings.IPAddress}} $CONTAINER"
 IP=`$IP_COMMAND`
 if [ -n "$IP" ] ; then
-    echo "$CONTAINER is ready in the IP address: $IP"
+    _print "$CONTAINER is ready in the IP address: $IP"
 fi
 
 COMMAND="mysql -uroot -p1234 --default-character-set=utf8mb4 $ARGS"
@@ -78,11 +78,12 @@ if tty -s ; then
     DOCKER_COMMAND="docker exec -it $CONTAINER $COMMAND"
     eval $DOCKER_COMMAND
 
-    if [ $? -ne 0 ]; then
-        echo
-        echo "Error executing the following command:"
-        echo $DOCKER_COMMAND
-        echo $COMMAND
+    RETURN_VALUE=$?
+    if [ $RETURN_VALUE -ne 0 ]; then
+        _print
+        _print "Error executing the following command: (return value: $RETURN_VALUE)"
+        _print $DOCKER_COMMAND
+        _print $COMMAND
     fi
 else
     DOCKER_COMMAND="docker exec -i $CONTAINER $COMMAND"
