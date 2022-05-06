@@ -12,7 +12,7 @@ not deterministic
 begin
     declare subject_id type of subject.subject_id;
 
-    select s.acronym into subject_id
+    select s.subject_id into subject_id
     from subject s
     where s.acronym = subject_acronym;
 
@@ -21,7 +21,7 @@ begin
         from enrolled e
         where e.studentDNI = studentDNI
             and e.subject_id = subject_id
-            and e.year = year;
+            and e.year = year
     ) then
         update enrolled e
         set e.grade = grade

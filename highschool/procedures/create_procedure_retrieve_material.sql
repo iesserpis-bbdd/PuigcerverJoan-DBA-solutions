@@ -28,13 +28,13 @@ begin
         insert into material_history(material_id, teacherDNI, amount)
         values (material_id, teacherDNI, amount);
     elseif available_amount < amount and available_amount > 0
+    then
         update material m
         set m.amount = 0
         where m.material_id = material_id;
 
         insert into material_history(material_id, teacherDNI, amount)
         values (material_id, teacherDNI, available_amount);
-    then
     end if;
 
     commit;
