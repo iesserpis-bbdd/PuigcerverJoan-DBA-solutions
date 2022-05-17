@@ -39,15 +39,19 @@ _print(){
     fi
 }
 
-if [ "$(docker ps -q -f status=exited -f name=$CONTAINER)" ]; then
-    _print Deleting previous $CONTAINER instance...
-    docker rm $CONTAINER >/dev/null
+if [ ! -x "$(command -v docker)" ]; then
+    echo "Error. docker is not installed"
+    exit 1
 fi
 
-if [ ! "$(docker ps -q -f name=$CONTAINER)" ]; then
+if [ "$(docker ps -q -f status=exited -f name=$CONTAINER)" ]; then
+    _print Starting previous $CONTAINER instance...
+    docker start $CONTAINER >/dev/null
+elif [ ! "$(docker ps -q -f name=$CONTAINER)" ]; then
     _print Starting $CONTAINER ...
     docker run -d --name $CONTAINER \
         -e MYSQL_ROOT_PASSWORD=1234 \
+        -p 3306:3306 \
         --health-cmd='mysql -uroot -p1234' --health-interval=2s \
         mariadb:latest >/dev/null
 
